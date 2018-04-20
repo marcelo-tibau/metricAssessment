@@ -128,8 +128,12 @@ a12p <- sum(a12$sad_count, a12$angry_count)/sum(a12$likes_count, a12$love_count,
 dfAs <- data.frame(a1P, a2p, a3p, a4p, a5p, a6p, a7p, a8p, a9p, a10p, a11p, a12p)
 write.csv(dfAs, "dfAs.csv")
 
+m1 <- t(dfAs)
+d2 <- data.frame(m1)
 
-
+# mean = 0.03419386
+mean(m1)
+ 
 
 # Enhanced Scatterplot of Sad Vs. Angry by number of Likes 
 s <- innerSadAngry$sad_count
