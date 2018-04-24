@@ -6,9 +6,12 @@ library(tidyverse)
 library(dplyr)
 library(car)
 
-token <- "EAACEdEose0cBACEeHZCV9I7hqJ1sx1AfZABcZB0B0ZCes7ap93DNxVtwB6rp6czQYTD6tYKUD6odW1xsgfXBEeC0IpYlihiHibjYCInaX7LRdkzWJfZAJX3RCKVEZCAUakohwVGTjBgPQwPcaB5G3l9WgXZBgcoKjeEogjbZCdpl8AyM49VyTbxk5yxs0EnfUpOovNzZCCRu8bAZDZD"
+token <- "EAACEdEose0cBAFfNa0LkVwE3dfrB9ZBQOiuAnJ5xUV9sjKBIcsquhswCbhZBlNgZBvS73nhYYmuteUp1ZAuRXmU6kaqXcaBuZCSkX5yxEFL2ZCvj0xeDWH8ASMUiUcgVaOFmEWmkMn30nWZB1FIh01d0D8m9qMePdF5ZB7Bj6EGn1jnZCMJayuIAnHpoiEI1yWZCOw1hFW24B9IwZDZD"
 
 pg <- getPage("103682003003732", token, n = 5000)
+pg <- getPage("357274534427476", token, n = 5000)
+pg <- getPage("104725456232742", token, n = 5000)
+pg <- getPage("193944443965876", token, n = 5000)
 
 # Visualize
 glimpse(pg)
@@ -65,6 +68,17 @@ sadV1 <- subset(reactions_postsAll, sad_count >=1)
 angryV1 <- subset(reactions_postsAll, angry_count>=1)
 
 innerSadAngry <- inner_join(sadV1, angryV1)
+
+# Write reactions dataframes
+write.csv(reactions_postsAll, "reactionsMK.csv")
+write.csv(reactions_postsAll, "reactionsCoca.csv")
+write.csv(reactions_postsAll, "reactionsCentauro.csv")
+write.csv(reactions_postsAll, "reactionsCeA.csv")
+
+reactionsMK <- read.csv("reactionsMK.csv", header = TRUE, sep = ",")
+reactionsCoca <- read.csv("reactionsCoca.csv", header = TRUE, sep = ",")
+reactionsCentauro <- read.csv("reactionsCentauro.csv", header = TRUE, sep = ",")
+reactionsCeA <- read.csv("reactionsCeA.csv", header = TRUE, sep = ",")
 
 # Scatterplots with fit lines
 # Angry Vs. Sad
