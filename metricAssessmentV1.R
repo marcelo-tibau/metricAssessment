@@ -6,12 +6,14 @@ library(tidyverse)
 library(dplyr)
 library(car)
 
-token <- "EAACEdEose0cBAFfNa0LkVwE3dfrB9ZBQOiuAnJ5xUV9sjKBIcsquhswCbhZBlNgZBvS73nhYYmuteUp1ZAuRXmU6kaqXcaBuZCSkX5yxEFL2ZCvj0xeDWH8ASMUiUcgVaOFmEWmkMn30nWZB1FIh01d0D8m9qMePdF5ZB7Bj6EGn1jnZCMJayuIAnHpoiEI1yWZCOw1hFW24B9IwZDZD"
+token <- "EAACEdEose0cBALK0Rj9DfYwyqBZC1ZAb75yWUb6f236Fkre8ZA87228k51P75G7D28ZC3hgZBV9pnZCvTr8RFBD3js9umJCsPzKveCiZBCfhgU2jivWzxAeyO0MxVZCZCQUhbjiF11RKzrtoRHEb6wbkhU57Av9ILWP5nDWhyWNtQ2YMzKypebCIRSAfsVDneWZAzfH5bi48AvnQZDZD"
 
 pg <- getPage("103682003003732", token, n = 5000)
 pg <- getPage("357274534427476", token, n = 5000)
 pg <- getPage("104725456232742", token, n = 5000)
 pg <- getPage("193944443965876", token, n = 5000)
+pg <- getPage("125056230917537", token, n = 5000)
+pg <- getPage("158219407534974", token, n = 5000)
 
 # Visualize
 glimpse(pg)
@@ -74,11 +76,26 @@ write.csv(reactions_postsAll, "reactionsMK.csv")
 write.csv(reactions_postsAll, "reactionsCoca.csv")
 write.csv(reactions_postsAll, "reactionsCentauro.csv")
 write.csv(reactions_postsAll, "reactionsCeA.csv")
+write.csv(reactions_postsAll, "reactionsTim.csv")
+write.csv(reactions_postsAll, "reactionsLoreal.csv")
 
 reactionsMK <- read.csv("reactionsMK.csv", header = TRUE, sep = ",")
+reactionsMK <- reactionsMK[ , -c(1)]
+
 reactionsCoca <- read.csv("reactionsCoca.csv", header = TRUE, sep = ",")
+reactionsCoca <- reactionsCoca[ , -c(1)]
+
 reactionsCentauro <- read.csv("reactionsCentauro.csv", header = TRUE, sep = ",")
+reactionsCentauro <- reactionsCentauro[ , -c(1)]
+
 reactionsCeA <- read.csv("reactionsCeA.csv", header = TRUE, sep = ",")
+reactionsCeA <- reactionsCeA[ , -c(1)]
+
+reactionsTim <- read.csv("reactionsTim.csv", header = TRUE, sep = ",")
+reactionsTim <- reactionsTim[ , -c(1)]
+
+reactionsLoreal <- read.csv("reactionsLoreal.csv", header = TRUE, sep = ",")
+reactionsLoreal <- reactionsLoreal[ , -c(1)]
 
 # Scatterplots with fit lines
 # Angry Vs. Sad
