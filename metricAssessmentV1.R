@@ -6,7 +6,7 @@ library(tidyverse)
 library(dplyr)
 library(car)
 
-token <- "EAACEdEose0cBAPlZBoqcPe2ZAOxtq1M5de5F9V1RXRyEdAZANxnVy7ROiKyPaOuEFtI4tsEAeMaCuVVbnQeQ9jGN4zY0nA36CgFeNsGQHW0v8jZBJFuD8OC49BcZCSAiZAZBn7NgYhOEvWCr3qR35FDBlsA5hpVj4808YGbZAYdAmLoFQvuZCQwgnP7whBnZBWoozDH5We3XvBfAZDZD"
+token <- "EAACEdEose0cBABGlZB6pXz5Xs5aDgOb97RUltGTJSUZBoolSfDe6ElnB5OfWpLgiDnUZAPaOKFNeDjhDQcVFb4x5lzCTjaLzd8FBT8t0aQqF9cmWDTqs2JYZB2jqTtEKi2lZBE9qqMNR16rdpdZCtwNJL48UXCGWjdb9TBUZAeMFC4awa6Rx2ZCfu8VfO1pfS4lqRR2rmz7JQQZDZD"
 
 pg <- getPage("103682003003732", token, n = 5000)
 pg <- getPage("357274534427476", token, n = 5000)
@@ -145,6 +145,25 @@ names(PostsIDsCentauro) <- c("message", "id")
 totalCentauro <- merge(reactionsCentauro, PostsIDsCentauro, by="id")
 totalCentauro <- totalCentauro[,c(1,8,2,3,4,5,6,7)]
 write.csv(totalCentauro, "totalCentauro.csv")
+
+PostsIDsCeA <- data.frame(pg$message, pg$id)
+names(PostsIDsCeA) <- c("message", "id")
+totalCeA <- merge(reactionsCeA, PostsIDsCeA, by="id")
+totalCeA <- totalCeA[,c(1,8,2,3,4,5,6,7)]
+write.csv(totalCeA, "totalCeA.csv")
+
+postsIDsTim <- data.frame(pg$message, pg$id)
+names(postsIDsTim) <- c("message", "id")
+totalTim <- merge(reactionsTim, postsIDsTim, by="id")
+totalTim <- totalTim[,c(1,8,2,3,4,5,6,7)]
+write.csv(totalTim, "totalTim.csv")
+
+postsIDsLoreal <- data.frame(pg$message, pg$id)
+postsIDsLoreal <- postsIDsLoreal[-c(1), ]
+names(postsIDsLoreal) <- c("message", "id")
+totalLoreal <- merge(reactionsLoreal, postsIDsLoreal, by="id")
+totalLoreal <- totalLoreal[,c(1,8,2,3,4,5,6,7)]
+write.csv(totalLoreal, "totalLoreal.csv")
 
 # Scrap out outliers with few reactions (in our case with 0 NegativeReactions)
 dataSetReactionsTwo <- subset(as.character(dataSetReactions, dataSetReactions$NegativeReactions >= 0))
