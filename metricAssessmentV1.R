@@ -6,7 +6,7 @@ library(tidyverse)
 library(dplyr)
 library(car)
 
-token <- "EAACEdEose0cBALK0Rj9DfYwyqBZC1ZAb75yWUb6f236Fkre8ZA87228k51P75G7D28ZC3hgZBV9pnZCvTr8RFBD3js9umJCsPzKveCiZBCfhgU2jivWzxAeyO0MxVZCZCQUhbjiF11RKzrtoRHEb6wbkhU57Av9ILWP5nDWhyWNtQ2YMzKypebCIRSAfsVDneWZAzfH5bi48AvnQZDZD"
+token <- "EAACEdEose0cBAPlZBoqcPe2ZAOxtq1M5de5F9V1RXRyEdAZANxnVy7ROiKyPaOuEFtI4tsEAeMaCuVVbnQeQ9jGN4zY0nA36CgFeNsGQHW0v8jZBJFuD8OC49BcZCSAiZAZBn7NgYhOEvWCr3qR35FDBlsA5hpVj4808YGbZAYdAmLoFQvuZCQwgnP7whBnZBWoozDH5We3XvBfAZDZD"
 
 pg <- getPage("103682003003732", token, n = 5000)
 pg <- getPage("357274534427476", token, n = 5000)
@@ -96,6 +96,58 @@ reactionsTim <- reactionsTim[ , -c(1)]
 
 reactionsLoreal <- read.csv("reactionsLoreal.csv", header = TRUE, sep = ",")
 reactionsLoreal <- reactionsLoreal[ , -c(1)]
+
+# Put the datasets together
+reactionsAll <- rbind(reactionsMK, reactionsCoca, reactionsCentauro, 
+                      reactionsCeA, reactionsTim, reactionsLoreal)
+write.csv(reactionsAll, "reactionsAll.csv")
+
+reactionsAll <- read.csv("reactionsAll.csv", header = TRUE, sep = ",")
+reactionsAll <- reactionsAll[ , -c(1)]
+
+# probability Angry
+# >= 1
+angryDataframeOne <- subset(reactionsAll, angry_count >= 1)
+Pa1 <- 2534/17677
+
+## Scoring Methods
+# Logistic Regression
+# Boosted Decision Tree
+# Averaged Perceptron
+# Supported Vector Machine (SVM)
+
+# Create dataset with 3 variables: Likes / Positive Reactions / Negative Reactions
+dataSetReactions <- data.frame(reactionsAll$id, reactionsAll$likes_count,
+                               paste(reactionsAll$love_count + reactionsAll$haha_count + reactionsAll$wow_count),
+                               paste(reactionsAll$sad_count + reactionsAll$angry_count))
+
+names(dataSetReactions) <- c("IDs", "Likes", "PositiveReactions", "NegativeReactions")
+
+write.csv(dataSetReactions, "dataSetReactions.csv")
+
+# Retrieve messages from posts
+postsIDsMK <- data.frame(pg$message, pg$id)
+postsIDsMK <- postsIDsMK[-c(1), ]
+names(postsIDsMK) <- c("message", "id")
+totalMK <- merge(reactionsMK, postsIDsMK, by="id")
+totalMK <- totalMK[,c(1,8,2,3,4,5,6,7)]
+write.csv(totalMK, "totalMK.csv")
+
+postsIDsCoca <- data.frame(pg$message, pg$id)
+postsIDsCoca <- postsIDsCoca[-c(1,2), ]
+names(postsIDsCoca) <- c("message", "id")
+totalCoca <- merge(reactionsCoca, postsIDsCoca, by="id")
+totalCoca <- totalCoca[,c(1,8,2,3,4,5,6,7)]
+write.csv(totalCoca, "totalCoca.csv")
+
+PostsIDsCentauro <- data.frame(pg$message, pg$id)
+names(PostsIDsCentauro) <- c("message", "id") 
+totalCentauro <- merge(reactionsCentauro, PostsIDsCentauro, by="id")
+totalCentauro <- totalCentauro[,c(1,8,2,3,4,5,6,7)]
+write.csv(totalCentauro, "totalCentauro.csv")
+
+# Scrap out outliers with few reactions (in our case with 0 NegativeReactions)
+dataSetReactionsTwo <- subset(as.character(dataSetReactions, dataSetReactions$NegativeReactions >= 0))
 
 # Scatterplots with fit lines
 # Angry Vs. Sad
