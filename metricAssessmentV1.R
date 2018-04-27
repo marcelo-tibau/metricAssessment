@@ -177,8 +177,83 @@ names(dataSetAll) <- c("IDs", "Messages", "Likes", "PositiveReactions", "Negativ
 
 write.csv(dataSetAll, "dataSetAll.csv")
 
-# Scrap out outliers with few reactions (in our case with 0 NegativeReactions)
-dataSetReactionsTwo <- subset(as.character(dataSetReactions, dataSetReactions$NegativeReactions >= 0))
+dataSetAll <- read.csv("dataSetAll.csv", header = TRUE, sep = ",")
+
+dataSetOne <- read.csv("dataSetAll.csv", header = TRUE, sep = ",")
+dataSetOne <- dataSetOne[ , -c(1)]
+
+# Scrap out outliers with few reactions (in our case with 0 PositiveReactions and 0 NegativeReactions)
+#dataSetReactionsTwo <- subset(as.character(dataSetReactions, dataSetReactions$NegativeReactions >= 0))
+#dataSetScrapedOut <- subset(dataSetOne, PositiveReactions>=1 & NegativeReactions>=1)
+
+# Log transformation to normally distributed
+dataSetOne$transf_Likes <- log(dataSetOne$Likes)
+dataSetOne$transf_PositiveReactions <- log(dataSetOne$PositiveReactions)
+dataSetOne$transf_NegativeReaction <- log(dataSetOne$NegativeReactions)
+
+# New dataset with log tranformed data
+dataSetTwo <- data.frame(dataSetOne$IDs, dataSetOne$Messages, dataSetOne$transf_Likes,
+                         dataSetOne$transf_PositiveReactions, dataSetOne$transf_NegativeReaction)
+names(dataSetTwo) <- c("IDs", "Messages", "LikesLog", "PositiveReactionsLog", "NegativeReactionsLog")
+
+write.csv(dataSetTwo, "dataSetTwo.csv")
+
+dataSetTwo <- read.csv("dataSetTwo.csv", header = TRUE, sep = ",")
+
+# Estimate parameters assuming log-Normal distribution 
+library(MASS)
+#dataSetTwoAlt <- read.csv("dataSetTwo.csv", header = TRUE, sep = ",")
+#dataSetTwoAlt <- dataSetTwoAlt[ , -c(1)]
+#dataSetTwoAlt <- dataSetTwoAlt[!is.infinite(rowSums(dataSetTwoAlt)), ]
+dataSetTwoAlt <- data.frame(dataSetTwo$LikesLog, dataSetTwo$PositiveReactionsLog, dataSetTwo$NegativeReactionsLog)
+names(dataSetTwoAlt) <- c("LikesLog", "PositiveReactionsLog", "NegativeReactionsLog")
+fitdistr(dataSetTwoAlt[!is.infinite(rowSums(dataSetTwo$LikesLog)), ], "lognormal")
+
+plot(density(dataSetTwoAlt$LikesLog))
+plot(dataSetOne$Likes)
+plot(density(dataSetTwoAlt$PositiveReactionsLog))
+plot(density(dataSetTwoAlt$NegativeReactionsLog))
+plot(density(c(dataSetTwoAlt$LikesLog, dataSetTwoAlt$PositiveReactionsLog, dataSetTwoAlt$NegativeReactionsLog)))
+
+# correlations between the variables (pairplot)
+library(ggplot2)
+library(lattice)
+library(GGally)
+library(akima)
+
+ggpairs(data = dataSetTwoAlt,
+        columns = 1:3,
+        title = "Variables",
+        aes(colour = "red"))
+
+pairs(dataSetTwoAlt, c("LikesLog", "PositiveReactionsLog"))
+
+# Adaboost function 
+
+adaBoost <- function(train=decisionStump,dat.train,y.train,B=10,...)
+{
+  #implement boosting
+  if (!is.data.frame(y.train)) {y.train<-data.frame(y.train=y.train)}
+  allPars <- matrix(list())
+  n<-dim(y.train)[1]
+  if (n!=dim(dat.train)[1]){stop('data and label must have same length')}
+  
+  w=rep(1/n,n)
+  alpha <- vector()
+  for (b in 1:B){
+    #         pars <- do.call(train,c(list(dat.train,w,y.train),list(...)))
+    pars <- train(dat.train, w, y.train, ...)
+    yhat <- classify(pars,dat.train)
+    error <- t(w)%*%(yhat!=y.train)/sum(w)
+    vote <- as.numeric(log((1-error)/error))
+    w <- w*exp(vote*(yhat!=y.train))
+    alpha[b] <- vote
+    allPars[[b]] <- pars
+  }
+  res <- list(alpha=alpha,allPars=allPars)
+  class(res) <- 'ab'
+  return(res)
+}
 
 # Scatterplots with fit lines
 # Angry Vs. Sad
