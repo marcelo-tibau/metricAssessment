@@ -165,6 +165,18 @@ totalLoreal <- merge(reactionsLoreal, postsIDsLoreal, by="id")
 totalLoreal <- totalLoreal[,c(1,8,2,3,4,5,6,7)]
 write.csv(totalLoreal, "totalLoreal.csv")
 
+totalAll <- rbind(totalMK, totalCoca, totalCentauro, totalCeA, totalTim, totalLoreal)
+write.csv(totalAll, "totalAll.csv")
+
+# Create dataset from totalAll with 3 variables: Likes / Positive Reactions / Negative Reactions
+dataSetAll <- data.frame(totalAll$id, totalAll$message, totalAll$likes_count,
+                               paste(totalAll$love_count + totalAll$haha_count + totalAll$wow_count),
+                               paste(totalAll$sad_count + totalAll$angry_count))
+
+names(dataSetAll) <- c("IDs", "Messages", "Likes", "PositiveReactions", "NegativeReactions")
+
+write.csv(dataSetAll, "dataSetAll.csv")
+
 # Scrap out outliers with few reactions (in our case with 0 NegativeReactions)
 dataSetReactionsTwo <- subset(as.character(dataSetReactions, dataSetReactions$NegativeReactions >= 0))
 
