@@ -114,19 +114,36 @@ write.csv(totalMK, "totalMKLog.csv")
 
 hist(totalMK$transf_Likes, border = "darkgreen",
      col = "darkgreen", las=1)
-
+# Like
 ggplot(data = totalMK, aes(totalMK$transf_Likes)) +
   geom_histogram(binwidth = 0.5, col="white", fill="darkgrey") +
                  labs(title="Histograma Likes Mary Kay") +
                    labs(x="Likes (em log)", y="Frequência")
 
+# Love
+ggplot(data = corrMK2, aes(love_log)) +
+  geom_histogram(binwidth = 0.5, col="white", fill="darkgrey") +
+  labs(title="Histograma Love Mary Kay") +
+  labs(x="Love (em log)", y="Frequência")
+
+# Haha
+
 # Correlations
 # corr_mat <- cor(mat,method="s")
-# MK
-corrMK1 <- data.frame(totalMK$likes_count, totalMK$transf_Likes)
-names(corrMK1) <- c("likes_count", "transf_Likes")
 
-qplot(transf_Likes, likes_count, data = corrMK1) + scale_y_continuous(limits = c(0, 2500))
+# Like
+corrMK1 <- data.frame(totalMK$likes_count, totalMK$transf_Likes)
+names(corrMK1) <- c("likes_count", "likes_log")
+
+qplot(likes_log, likes_count, data = corrMK1) + scale_y_continuous(limits = c(50000, 150000))
+
+# Love
+corrMK2 <- data.frame(as.numeric(totalMK$love_count), as.numeric(totalMK$transf_Love))
+names(corrMK2) <- c("love_count", "love_log")
+
+qplot(love_log, love_count, data = corrMK2) 
+
+# Haha
 
 
 # Coca
