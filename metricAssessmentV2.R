@@ -6,6 +6,7 @@ library(tidyverse)
 library(dplyr)
 library(car)
 library(ggplot2)
+library(corrplot)
 
 token <- "EAACEdEose0cBAD2B7BPlCNxm04pQAs8eFSSzXd51qdNZCcDjkgtW1xdxjzo3NPZCX8T1V3e7ZChsN8ZAiotR4Vtb0ZCN6zOh78CIwJFLhISLisC7JjzEDz9PnZAdOzuCx8IuKxqoxZBkFOKNtNaUPrZBV0TaOlLHmtb0paSG5uPTDxADySX0nK13tA9hN1XmocN7k9AEEZCIEbQZDZD"
 
@@ -86,10 +87,13 @@ write.csv(totalLoreal, "totalLoreal.csv")
 
 # Log transformation to normally distributed
 #MK - df$Assay <- gsub('-', '-0', df$Assay)
+totalMK <- read.csv("totalMK.csv", header = TRUE, sep = ",")
+totalMK <- totalMK[ , -c(1)]
+
 totalMK$transf_Likes <- log(totalMK$likes_count)
 #totalMK$transf_Likes <- gsub('-Inf', '0', totalMK$transf_Likes)
 totalMK$transf_Love <- log(totalMK$love_count)
-totalMK$transf_Love <- gsub('-Inf', '0.0000000', totalMK$transf_Love)
+totalMK$transf_Love <- gsub('-Inf', '0', totalMK$transf_Love)
 totalMK$transf_Love <- gsub('0.0000000', '0', totalMK$transf_Love)
 totalMK$transf_Haha <- log(totalMK$haha_count)
 totalMK$transf_Haha <- gsub('-Inf', '0', totalMK$transf_Haha)
@@ -99,6 +103,8 @@ totalMK$transf_Sad <- log(totalMK$sad_count)
 totalMK$transf_Sad <- gsub('-Inf', '0', totalMK$transf_Sad)
 totalMK$transf_Angry <- log(totalMK$angry_count)
 totalMK$transf_Angry <- gsub('-Inf', '0', totalMK$transf_Angry)
+
+write.csv(totalMK, "totalMKLog.csv")
 
 # Histograms plots (reactons (x) Vs. count (y))
 # visual representation of the distribution of a dataset
@@ -115,8 +121,12 @@ ggplot(data = totalMK, aes(totalMK$transf_Likes)) +
                    labs(x="Likes (em log)", y="Frequência")
 
 # Correlations
-library(corrplot)
+# corr_mat <- cor(mat,method="s")
+# MK
+corrMK1 <- data.frame(totalMK$likes_count, totalMK$transf_Likes)
+names(corrMK1) <- c("likes_count", "transf_Likes")
 
+qplot(transf_Likes, likes_count, data = corrMK1) + scale_y_continuous(limits = c(0, 2500))
 
 
 # Coca
