@@ -84,25 +84,46 @@ totalLoreal <- merge(reactionsLoreal, postsIDsLoreal, by="id")
 totalLoreal <- totalLoreal[,c(1,8,2,3,4,5,6,7)]
 write.csv(totalLoreal, "totalLoreal.csv")
 
-# Histograms plots (reactons (x) Vs. frequency (y))
+# Log transformation to normally distributed
+#MK - df$Assay <- gsub('-', '-0', df$Assay)
+totalMK$transf_Likes <- log(totalMK$likes_count)
+#totalMK$transf_Likes <- gsub('-Inf', '0', totalMK$transf_Likes)
+totalMK$transf_Love <- log(totalMK$love_count)
+totalMK$transf_Love <- gsub('-Inf', '0.0000000', totalMK$transf_Love)
+totalMK$transf_Love <- gsub('0.0000000', '0', totalMK$transf_Love)
+totalMK$transf_Haha <- log(totalMK$haha_count)
+totalMK$transf_Haha <- gsub('-Inf', '0', totalMK$transf_Haha)
+totalMK$transf_Wow <- log(totalMK$wow_count)
+totalMK$transf_Wow <- gsub('-Inf', '0', totalMK$transf_Wow)
+totalMK$transf_Sad <- log(totalMK$sad_count)
+totalMK$transf_Sad <- gsub('-Inf', '0', totalMK$transf_Sad)
+totalMK$transf_Angry <- log(totalMK$angry_count)
+totalMK$transf_Angry <- gsub('-Inf', '0', totalMK$transf_Angry)
+
+# Histograms plots (reactons (x) Vs. count (y))
+# visual representation of the distribution of a dataset
 # MK
 #hist(totalMK$likes_count, border = "darkgreen",
  #    col = "darkgreen", las=1, prob = TRUE)
 
-hist(totalMK$likes_count, border = "darkgreen",
+hist(totalMK$transf_Likes, border = "darkgreen",
      col = "darkgreen", las=1)
 
-hist(totalMK$sad_count, border = "darkgreen",
-     col = "darkgreen", las=1)
+ggplot(data = totalMK, aes(totalMK$transf_Likes)) +
+  geom_histogram(binwidth = 0.5, col="white", fill="darkgrey") +
+                 labs(title="Histograma Likes Mary Kay") +
+                   labs(x="Likes (em log)", y="Frequência")
 
-hist(totalMK$love_count)
+# Correlations
+library(corrplot)
 
-ggplot(data = totalMK, aes(totalMK$likes_count)) + geom_histogram()
 
-ggplot(data=chol, aes(chol$AGE)) + geom_histogram()
 
 # Coca
-ggplot(data = totalCoca, aes(totalCoca$likes_count)) + geom_histogram(binwidth = 0.5, col="white")
+ggplot(data = totalCoca, aes(totalCoca$likes_count)) +
+  geom_histogram(binwidth = 0.5, col="white", fill="darkgrey",
+                 labs(title="Histograma Likes Mary Kay") +
+                   labs(x="Likes (em log)", y="Frequência"))
 
 ggplot(data=chol, aes(chol$AGE)) + 
   geom_histogram(breaks=seq(20, 50, by = 2), 
