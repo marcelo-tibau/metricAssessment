@@ -106,6 +106,9 @@ totalMK$transf_Angry <- gsub('-Inf', '0', totalMK$transf_Angry)
 
 write.csv(totalMK, "totalMKLog.csv")
 
+totalMK <- read.csv("totalMKLog.csv", header = TRUE, sep = ",")
+totalMK <- totalMK[ , -c(1)]
+
 # Histograms plots (reactons (x) Vs. count (y))
 # visual representation of the distribution of a dataset
 # MK
@@ -127,6 +130,29 @@ ggplot(data = corrMK2, aes(love_log)) +
   labs(x="Love (em log)", y="Frequência")
 
 # Haha
+ggplot(data = corrM3, aes(haha_log)) +
+  geom_histogram(binwidth = 0.5, col="white", fill="darkgrey") +
+  labs(title="Histograma Haha Mary Kay") +
+  labs(x="Haha (em log)", y="Frequência")
+
+# Wow
+ggplot(data = corrMK4, aes(wow_log)) +
+  geom_histogram(binwidth = 0.5, col="white", fill="darkgrey") +
+  labs(title="Histograma Wow Mary Kay") +
+  labs(x="Wow (em log)", y="Frequência")
+
+# Sad
+ggplot(data = corrMK5, aes(sad_log)) +
+  geom_histogram(binwidth = 0.5, col="white", fill="darkgrey") +
+  labs(title="Histograma Sad Mary Kay") +
+  labs(x="Sad (em log)", y="Frequência")
+
+# Angry
+ggplot(data = corrMK6, aes(angry_log)) +
+  geom_histogram(binwidth = 0.5, col="white", fill="darkgrey") +
+  labs(title="Histograma Angry Mary Kay") +
+  labs(x="Angry (em log)", y="Frequência")
+
 
 # Correlations
 # corr_mat <- cor(mat,method="s")
@@ -144,7 +170,28 @@ names(corrMK2) <- c("love_count", "love_log")
 qplot(love_log, love_count, data = corrMK2) 
 
 # Haha
+corrM3 <- data.frame(as.numeric(totalMK$haha_count), as.numeric(totalMK$transf_Haha))
+names(corrM3) <- c("haha_count", "haha_log")
 
+qplot(haha_log, haha_count, data = corrM3)
+
+# Wow
+corrMK4 <- data.frame(as.numeric(totalMK$wow_count), as.numeric(totalMK$transf_Wow))
+names(corrMK4) <- c("wow_count", "wow_log")
+
+qplot(wow_log, wow_count, data = corrMK4)
+
+# Sad
+corrMK5 <- data.frame(as.numeric(totalMK$sad_count), as.numeric(totalMK$transf_Sad))
+names(corrMK5) <- c("sad_count", "sad_log")
+
+qplot(sad_log, sad_count, data = corrMK5)
+
+# Angry
+corrMK6 <- data.frame(as.numeric(totalMK$angry_count), as.numeric(totalMK$transf_Angry))
+names(corrMK6) <- c("angry_count", "angry_log")
+
+qplot(angry_log, angry_count, data = corrMK6)
 
 # Coca
 ggplot(data = totalCoca, aes(totalCoca$likes_count)) +
