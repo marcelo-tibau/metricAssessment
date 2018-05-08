@@ -109,6 +109,25 @@ write.csv(totalMK, "totalMKLog.csv")
 totalMK <- read.csv("totalMKLog.csv", header = TRUE, sep = ",")
 totalMK <- totalMK[ , -c(1)]
 
+totalCoca <- read.csv("totalCoca.csv", header = TRUE, sep = ",")
+totalCoca <- totalCoca[ , -c(1)]
+
+totalCoca$transf_Like <- log(totalCoca$likes_count)
+totalCoca$transf_Love <- log(totalCoca$love_count)
+totalCoca$transf_Love <- gsub('-Inf', '0', totalCoca$transf_Love)
+totalCoca$transf_Haha <- log(totalCoca$haha_count)
+totalCoca$transf_Haha <- gsub('-Inf', '0', totalCoca$transf_Haha)
+totalCoca$transf_Wow <- log(totalCoca$wow_count)
+totalCoca$transf_Wow <- gsub('-Inf', '0', totalCoca$transf_Wow)
+totalCoca$transf_Sad <- log(totalCoca$sad_count)
+totalCoca$transf_Sad <- gsub('-Inf', '0', totalCoca$transf_Sad)
+totalCoca$transf_Angry <- log(totalCoca$angry_count)
+totalCoca$transf_Angry <- gsub('-Inf', '0', totalCoca$transf_Angry)
+
+write.csv(totalCoca, "totalCocaLog.csv")
+totalCocaLog <- read.csv("totalCocaLog.csv", header = TRUE, sep = ",")
+totalCocaLog <- totalCocaLog[ , -c(1)]
+
 # Histograms plots (reactons (x) Vs. count (y))
 # visual representation of the distribution of a dataset
 # MK
@@ -123,10 +142,20 @@ ggplot(data = totalMK, aes(totalMK$transf_Likes)) +
                  labs(title="Histograma Likes Mary Kay") +
                    labs(x="Likes (em log)", y="Frequência")
 
+ggplot(data = totalCocaLog, aes(totalCocaLog$transf_Like)) +
+  geom_histogram(binwidth = 0.5, col="white", fill="darkgrey") +
+  labs(title="Histograma Likes Coca-Cola") +
+  labs(x="Likes (em log)", y="Frequência")
+
 # Love
 ggplot(data = corrMK2, aes(love_log)) +
   geom_histogram(binwidth = 0.5, col="white", fill="darkgrey") +
   labs(title="Histograma Love Mary Kay") +
+  labs(x="Love (em log)", y="Frequência")
+
+ggplot(data = corrCoca2, aes(love_log)) +
+  geom_histogram(binwidth = 0.5, col="white", fill="darkgrey") +
+  labs(title="Histograma Love Coca-Cola") +
   labs(x="Love (em log)", y="Frequência")
 
 # Haha
@@ -135,10 +164,20 @@ ggplot(data = corrM3, aes(haha_log)) +
   labs(title="Histograma Haha Mary Kay") +
   labs(x="Haha (em log)", y="Frequência")
 
+ggplot(data = corrCoca3, aes(haha_log)) +
+  geom_histogram(binwidth = 0.5, col="white", fill="darkgrey") +
+  labs(title="Histograma Haha Coca-Cola") +
+  labs(x="Haha (em log)", y="Frequência")
+
 # Wow
 ggplot(data = corrMK4, aes(wow_log)) +
   geom_histogram(binwidth = 0.5, col="white", fill="darkgrey") +
   labs(title="Histograma Wow Mary Kay") +
+  labs(x="Wow (em log)", y="Frequência")
+
+ggplot(data = corrCoca4, aes(wow_log)) +
+  geom_histogram(binwidth = 0.5, col="white", fill="darkgrey") +
+  labs(title="Histograma Wow Coca-Cola") +
   labs(x="Wow (em log)", y="Frequência")
 
 # Sad
@@ -147,12 +186,21 @@ ggplot(data = corrMK5, aes(sad_log)) +
   labs(title="Histograma Sad Mary Kay") +
   labs(x="Sad (em log)", y="Frequência")
 
+ggplot(data = corrCoca5, aes(sad_log)) +
+  geom_histogram(binwidth = 0.5, col="white", fill="darkgrey") +
+  labs(title="Histograma Sad Coca-Cola") +
+  labs(x="Sad (em log)", y="Frequência")
+
 # Angry
 ggplot(data = corrMK6, aes(angry_log)) +
   geom_histogram(binwidth = 0.5, col="white", fill="darkgrey") +
   labs(title="Histograma Angry Mary Kay") +
   labs(x="Angry (em log)", y="Frequência")
 
+ggplot(data = corrCoca6, aes(angry_log)) +
+  geom_histogram(binwidth = 0.5, col="white", fill="darkgrey") +
+  labs(title="Histograma Angry Coca-Cola") +
+  labs(x="Angry (em log)", y="Frequência")
 
 # Correlations
 # corr_mat <- cor(mat,method="s")
@@ -163,11 +211,22 @@ names(corrMK1) <- c("likes_count", "likes_log")
 
 qplot(likes_log, likes_count, data = corrMK1) + scale_y_continuous(limits = c(50000, 150000))
 
+corrCoca1 <- data.frame(totalCocaLog$likes_count, totalCocaLog$transf_Like)
+names(corrCoca1) <- c("likes_count", "likes_log")
+
+qplot(likes_log, likes_count, data = corrCoca1) + scale_y_continuous(limits = c(500000, 1500000))
+
+
 # Love
 corrMK2 <- data.frame(as.numeric(totalMK$love_count), as.numeric(totalMK$transf_Love))
 names(corrMK2) <- c("love_count", "love_log")
 
 qplot(love_log, love_count, data = corrMK2) 
+
+corrCoca2 <- data.frame(as.numeric(totalCocaLog$love_count), as.numeric(totalCocaLog$transf_Love))
+names(corrCoca2) <- c("love_count", "love_log")
+
+qplot(love_log, love_count, data = corrCoca2) + scale_y_continuous(limits = c(0, 150000))
 
 # Haha
 corrM3 <- data.frame(as.numeric(totalMK$haha_count), as.numeric(totalMK$transf_Haha))
@@ -175,11 +234,21 @@ names(corrM3) <- c("haha_count", "haha_log")
 
 qplot(haha_log, haha_count, data = corrM3)
 
+corrCoca3 <- data.frame(as.numeric(totalCocaLog$haha_count), as.numeric(totalCocaLog$transf_Haha))
+names(corrCoca3) <- c("haha_count", "haha_log")
+
+qplot(haha_log, haha_count, data = corrCoca3)
+
 # Wow
 corrMK4 <- data.frame(as.numeric(totalMK$wow_count), as.numeric(totalMK$transf_Wow))
 names(corrMK4) <- c("wow_count", "wow_log")
 
 qplot(wow_log, wow_count, data = corrMK4)
+
+corrCoca4 <- data.frame(as.numeric(totalCocaLog$wow_count), as.numeric(totalCocaLog$transf_Wow))
+names(corrCoca4) <- c("wow_count", "wow_log")
+
+qplot(wow_log, wow_count, data = corrCoca4)
 
 # Sad
 corrMK5 <- data.frame(as.numeric(totalMK$sad_count), as.numeric(totalMK$transf_Sad))
@@ -187,11 +256,21 @@ names(corrMK5) <- c("sad_count", "sad_log")
 
 qplot(sad_log, sad_count, data = corrMK5)
 
+corrCoca5 <- data.frame(as.numeric(totalCocaLog$sad_count), as.numeric(totalCocaLog$transf_Sad))
+names(corrCoca5) <- c("sad_count", "sad_log")
+
+qplot(sad_log, sad_count, data = corrCoca5)
+
 # Angry
 corrMK6 <- data.frame(as.numeric(totalMK$angry_count), as.numeric(totalMK$transf_Angry))
 names(corrMK6) <- c("angry_count", "angry_log")
 
 qplot(angry_log, angry_count, data = corrMK6)
+
+corrCoca6 <- data.frame(as.numeric(totalCocaLog$angry_count), as.numeric(totalCocaLog$transf_Angry))
+names(corrCoca6) <- c("angry_count", "angry_log")
+
+qplot(angry_log, angry_count, data = corrCoca6) + scale_y_continuous(limits = c(7500, 20000))
 
 # Coca
 ggplot(data = totalCoca, aes(totalCoca$likes_count)) +
